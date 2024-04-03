@@ -32,7 +32,7 @@ let index = 0;
 
 // FUNÇÕES !!
 
-//
+// função empenhada para tocar a música
 function playSong() {
     play.querySelector('.bi').classList.remove('bi-play-circle-fill');
     play.querySelector('.bi').classList.add('bi-pause-circle-fill');
@@ -40,6 +40,7 @@ function playSong() {
     isPlaying = true;
 }
 
+// função empenhada para pausar a música
 function pauseSong() {
     play.querySelector('.bi').classList.remove('bi-pause-circle-fill');
     play.querySelector('.bi').classList.add('bi-play-circle-fill');
@@ -47,6 +48,8 @@ function pauseSong() {
     isPlaying = false;
 }
 
+// função "duas em uma"
+// cada condição correspondente a valor booleano
 function playPauseDecider(){
     if(isPlaying === true) {
         pauseSong();
@@ -56,6 +59,7 @@ function playPauseDecider(){
     }
 }
 
+// função responsável por apresentar cada card/música com suas respectivas características
 function initializeSong(){
     cover.src = `images/covers/${playlist[index].file}.jpg`;
     song.src = `songs/${playlist[index].songName}.mp3`;
@@ -63,8 +67,31 @@ function initializeSong(){
     bandName.innerText = playlist[index].artist;
 }
 
+function previousSong() {
+    if(index === 0){
+        index = playlist.length -1;
+    }
+    else{
+        index -= 1;
+    }
+    initializeSong();
+    playSong();
+}
+
+function nextSong() {
+    if(index === playlist.length -1) {
+        index = 0;
+    }
+    else{
+        index += 1;
+    }
+    initializeSong();
+    playSong();
+}
+
 initializeSong();
 
 // ação dos botões
 play.addEventListener('click', playPauseDecider);
-previous.addEventListener('click',)
+previous.addEventListener('click', previousSong)
+next.addEventListener('click', nextSong)
