@@ -9,6 +9,9 @@ const previous = document.getElementById('previous');
 const currentProgress = document.getElementById('current-progress');
 const progressContainer = document.getElementById('progress-container');
 const shuffleButton = document.getElementById('shuffle');
+const repeatButton = document.getElementById('repeat');
+const songTime = document.getElementById('song-time')
+const totalTime = document.getElementById('total-time')
 
 // Variáveis criadas para apresentação da música
 const dustToDust = {
@@ -29,8 +32,10 @@ const waitAndBleed = {
     file: 'Slipknot_capa',
 };
 
+// variáveis auxiliares
 let isPlaying = false;
 let isShuffled = false;
+let repeatOn = false;
 
 const orginalPlaylist = [dustToDust, dontStay, waitAndBleed];
 let sortedPlaylist = [...orginalPlaylist]
@@ -73,6 +78,9 @@ function initializeSong(){
     bandName.innerText = sortedPlaylist[index].artist;
 }
 
+// funções responsáveis por avançar e retroceder as músicas
+
+// retroceder
 function previousSong() {
     if(index === 0){
         index = sortedPlaylist.length -1;
@@ -84,6 +92,7 @@ function previousSong() {
     playSong();
 }
 
+// avançar
 function nextSong() {
     if(index === sortedPlaylist.length -1) {
         index = 0;
@@ -101,6 +110,7 @@ function updateProgressBar() {
     currentProgress.style.setProperty('--progress', `${barWidth}%`);
 }
 
+// pular para determinada parte da barra de progresso
 function jumpTo(event) {
     const width = progressContainer.clientWidth;
     const clickPosition = event.offsetX;
@@ -108,6 +118,7 @@ function jumpTo(event) {
     song.currentTime = jumpToTime;
 }
 
+// função para embaralhamento das músicas
 function shuffleArray(preShuffleArray) {
     let size = preShuffleArray.length;
     let currentIndex = size - 1
@@ -120,6 +131,7 @@ function shuffleArray(preShuffleArray) {
     }
 }
 
+// função para tratar o botão shuffle ativado ou não e, contribuir com a função de embaralhamento
 function shuffleButtonClicked () {
     if(isShuffled === false) {
         isShuffled = true;
@@ -133,6 +145,44 @@ function shuffleButtonClicked () {
     }
 }
 
+// 
+function repeatButtonClicked () {
+    if(repeatOn === false) {
+        repeatOn = true;
+        repeatButton.classList.add('button-active');
+    }
+    else {
+        repeatOn = false;
+        repeatButton.classList.remove('button-active');
+    }
+}
+
+function nextOrRepeat () {
+    if(repeatOn === false) {
+        nextSong();
+    }
+    else {
+        playSong();
+    }
+}
+
+function toHHMMSS(originalNumber) {
+    let hours = Math.floor(originalNumber/3600);
+    let min = Math.floor((originalNumber - hours * 3600) / 60);
+    let secs = math.floor(originalNumber - hours * 3600 - min * 60);
+
+    alert(`${hours}:${min}:${secs}`);
+}
+
+function updateCurrentTime () {
+    songTime.innerText = song.currentTime;
+}
+
+function updateTotalTime () {
+    toHHMMSS(song.duration);
+    totalTime.innerText = song.duration;
+}
+
 initializeSong();
 
 // ação dos botões
@@ -140,5 +190,8 @@ play.addEventListener('click', playPauseDecider);
 previous.addEventListener('click', previousSong)
 next.addEventListener('click', nextSong);
 song.addEventListener('timeupdate', updateProgressBar);
+song.addEventListener('ended', nextOrRepeat);
+song.addEventListener('loadedmetadata', updateTotalTime);
 progressContainer.addEventListener('click', jumpTo);
 shuffleButton.addEventListener('click', shuffleButtonClicked);
+repeatButton.addEventListener('click', repeatButtonClicked);
