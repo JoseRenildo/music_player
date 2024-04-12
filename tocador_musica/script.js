@@ -6,6 +6,7 @@ const cover = document.getElementById('cover');
 const play = document.getElementById('play');
 const next = document.getElementById('next');
 const previous = document.getElementById('previous');
+const likeButton = document.getElementById('like')
 const currentProgress = document.getElementById('current-progress');
 const progressContainer = document.getElementById('progress-container');
 const shuffleButton = document.getElementById('shuffle');
@@ -18,18 +19,21 @@ const dustToDust = {
     songName: 'Dust to Dust',
     artist: 'Misfits',
     file: 'misfits-album',
+    liked: false,
 };
 
 const dontStay = {
     songName: "Don't Stay",
     artist: 'Linkin Park',
     file: "linkin-park-meteora",
+    liked: false,
 };
 
 const waitAndBleed = {
     songName: 'Wait and Bleed',
     artist: 'Slipknot',
     file: 'Slipknot_capa',
+    liked: false,
 };
 
 // variáveis auxiliares
@@ -41,7 +45,7 @@ const orginalPlaylist = [dustToDust, dontStay, waitAndBleed];
 let sortedPlaylist = [...orginalPlaylist]
 let index = 0;
 
-// FUNÇÕES !!
+// FUNÇÕES !!!
 
 // função empenhada para tocar a música
 function playSong() {
@@ -69,6 +73,8 @@ function playPauseDecider(){
         playSong();
     }
 }
+
+// 
 
 // função responsável por apresentar cada card/música com suas respectivas características
 function initializeSong(){
@@ -105,9 +111,11 @@ function nextSong() {
 }
 
 // função para barra de progresso
-function updateProgressBar() {
+function updateProgress() {
     const barWidth = (song.currentTime/song.duration)*100;
     currentProgress.style.setProperty('--progress', `${barWidth}%`);
+    // tempo corrido da música:
+    songTime.innerText = toHHMMSS(song.currentTime);
 }
 
 // pular para determinada parte da barra de progresso
@@ -145,7 +153,8 @@ function shuffleButtonClicked () {
     }
 }
 
-// 
+// função para diferenciar se está ativado ou não o botão repeat
+// assim ficando verde(ativado) ou não
 function repeatButtonClicked () {
     if(repeatOn === false) {
         repeatOn = true;
@@ -157,30 +166,33 @@ function repeatButtonClicked () {
     }
 }
 
+// função para quando acabar a música
+// caso acabe e não esteja o REPEAT ativado, avança para a próxima
 function nextOrRepeat () {
     if(repeatOn === false) {
         nextSong();
     }
-    else {
+    // caso esteja ativado, "playSong" para repetir a música atual
+    else { 
         playSong();
     }
 }
 
+// função para conversão do valor total em segundos para HH:MM:SS
 function toHHMMSS(originalNumber) {
-    let hours = Math.floor(originalNumber/3600);
+    let hours = Math.floor(originalNumber / 3600);
     let min = Math.floor((originalNumber - hours * 3600) / 60);
-    let secs = math.floor(originalNumber - hours * 3600 - min * 60);
+    let secs = Math.floor(originalNumber - hours * 3600 - min * 60);
 
-    alert(`${hours}:${min}:${secs}`);
+    return(`${hours.toString().padStart(2, '0')}:${min
+        .toString()
+        .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`);
 }
 
-function updateCurrentTime () {
-    songTime.innerText = song.currentTime;
-}
 
+// função para o tempo total da música 
 function updateTotalTime () {
-    toHHMMSS(song.duration);
-    totalTime.innerText = song.duration;
+    totalTime.innerText = toHHMMSS(song.duration);
 }
 
 initializeSong();
@@ -189,7 +201,7 @@ initializeSong();
 play.addEventListener('click', playPauseDecider);
 previous.addEventListener('click', previousSong)
 next.addEventListener('click', nextSong);
-song.addEventListener('timeupdate', updateProgressBar);
+song.addEventListener('timeupdate', updateProgress);
 song.addEventListener('ended', nextOrRepeat);
 song.addEventListener('loadedmetadata', updateTotalTime);
 progressContainer.addEventListener('click', jumpTo);
