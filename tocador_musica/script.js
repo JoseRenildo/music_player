@@ -41,7 +41,7 @@ let isPlaying = false;
 let isShuffled = false;
 let repeatOn = false;
 
-const orginalPlaylist = [dustToDust, dontStay, waitAndBleed];
+const orginalPlaylist = JSON.parse(localStorage.getItem('playlist')) ?? [dustToDust,dontStay,waitAndBleed];
 let sortedPlaylist = [...orginalPlaylist]
 let index = 0;
 
@@ -74,7 +74,19 @@ function playPauseDecider(){
     }
 }
 
-// 
+// função para preenchimento do botão de like
+function likeButtonRender () {
+    if (sortedPlaylist[index].liked === true) {
+        likeButton.querySelector('.bi').classList.remove('bi-heart');
+        likeButton.querySelector('.bi').classList.add('bi-heart-fill');
+        likeButton.classList.add('button-active');
+    }
+    else {
+        likeButton.querySelector('.bi').classList.remove('bi-heart-fill');
+        likeButton.querySelector('.bi').classList.add('bi-heart')
+        likeButton.classList.remove('button-active');
+    }
+}
 
 // função responsável por apresentar cada card/música com suas respectivas características
 function initializeSong(){
@@ -82,6 +94,7 @@ function initializeSong(){
     song.src = `songs/${sortedPlaylist[index].songName}.mp3`;
     songName.innerText = sortedPlaylist[index].songName;
     bandName.innerText = sortedPlaylist[index].artist;
+    likeButtonRender();
 }
 
 // funções responsáveis por avançar e retroceder as músicas
@@ -195,6 +208,18 @@ function updateTotalTime () {
     totalTime.innerText = toHHMMSS(song.duration);
 }
 
+// função para assimilar o 'click' no like e responder de acordo
+function likeButtonClicked () {
+    if(sortedPlaylist[index].liked === false) {
+        sortedPlaylist[index].liked = true;
+    }
+    else {
+        sortedPlaylist[index].liked = false;
+    }
+    likeButtonRender();
+    localStorage.setItem('playlist', JSON.stringify(orginalPlaylist));
+}
+
 initializeSong();
 
 // ação dos botões
@@ -207,3 +232,4 @@ song.addEventListener('loadedmetadata', updateTotalTime);
 progressContainer.addEventListener('click', jumpTo);
 shuffleButton.addEventListener('click', shuffleButtonClicked);
 repeatButton.addEventListener('click', repeatButtonClicked);
+likeButton.addEventListener('click', likeButtonClicked);
