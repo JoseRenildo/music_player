@@ -16,4 +16,4 @@ Veja agora: https://tocador-musica.netlify.app/
 <li>Bootstrap 5 (CSS)</li>
 <li>JavaScript</li>
 </ul>
-<h4>Ferramenta de estudos fornecida pela Hashtag Treinamentos</h4>
+<h4>Ferramenta de estudos fornecida pela <i>Hashtag Treinamentos</i>.</h4>
